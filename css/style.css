@@ -538,3 +538,38 @@ h6,
 .copyright a:hover {
     color: var(--primary);
 }
+@media (max-width: 991.98px) {
+  .service-item {
+    margin-bottom: 1.5rem;
+  }
+  .service-item img {
+    height: auto;
+    border-radius: 0.5rem;
+  }
+}
+@media (max-width: 991.98px) {
+  .service-item {
+    margin-bottom: 2rem;
+  }
+  .tab-pane-content img {
+    border-radius: 0.5rem;
+  }
+}
+.service-item:last-child {
+  margin-bottom: 0;
+}
+.tab-pane-content h6 {
+  margin-bottom: 0.75rem;
+}
+.tab-pane-content p {
+  margin-bottom: 0;
+}
+/* Hide mobile content by default */
+@media (max-width: 991.98px) {
+  .tab-pane-content {
+    display: none;
+  }
+  .tab-pane-content.active {
+    display: block;
+  }
+}
