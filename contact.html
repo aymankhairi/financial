@@ -87,32 +87,69 @@
                 <div class="col-lg-6 wow fadeIn" data-wow-delay="0.1s">
                     <p class="d-inline-block rounded text-primary fw-semi-bold py-1 px-3">Contact</p>
                     <h1 class="display-5 mb-4">Get In Touch</h1>
-                    <form action="https://formspree.io/f/mabcdxyz" method="POST">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="name" placeholder="Your Name">
-                                    <label for="name">Your Name</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-floating">
-                                    <input type="email" class="form-control" id="email" placeholder="Your Email">
-                                    <label for="email">Your Email</label>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <textarea class="form-control" placeholder="Leave a message here" id="message"
-                                        style="height: 100px"></textarea>
-                                    <label for="message">Message</label>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <button class="btn btn-primary py-3 px-5" type="submit">Send Message</button>
-                            </div>
-                        </div>
-                    </form>
+                    <form
+    class="contact-form glass-card row g-3"
+    id="contactForm"
+    method="POST"
+    data-endpoint="https://formspree.io/f/mnnolzay"
+    novalidate
+  >
+    <div class="col-sm-6">
+      <div class="form-floating">
+        <input
+          type="text"
+          class="form-control"
+          id="name"
+          name="name"
+          placeholder="Your Name"
+          required
+        />
+        <label for="name">Your Name</label>
+      </div>
+    </div>
+
+    <div class="col-sm-6">
+      <div class="form-floating">
+        <input
+          type="email"
+          class="form-control"
+          id="mail"
+          name="email"
+          placeholder="Your Email"
+          required
+        />
+        <label for="mail">Your Email</label>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="form-floating">
+        <textarea
+          class="form-control"
+          placeholder="Leave a message here"
+          name="message"
+          id="message"
+          style="height: 120px"
+          required
+        ></textarea>
+        <label for="message">Message</label>
+      </div>
+    </div>
+
+    <div class="col-12 text-center">
+      <!-- Important: type="button" stops native submit -->
+      <button
+        class="btn btn-primary w-100 py-3"
+        id="sendBtn"
+        type="button"
+      >
+        SEND MESSAGE
+      </button>
+    </div>
+  </form>
+
+  <!-- ✅ Toast Notification -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
                 </div>
                 <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s" style="min-height: 450px;">
                     <div class="position-relative rounded overflow-hidden h-100">
@@ -138,7 +175,7 @@
                     <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i><a href="https://maps.app.goo.gl/aVe6ddwZ4Gme7pXo7" target="_blank">5 Drayton Gardens , W13 0LG , London , United Kingdom</a></p>
                     <p class="mb-2"><i class="fa fa-phone-alt me-3"></i><a href="https://wa.me/447346336809" target="_blank">07346336809</a></p>
 
-                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>info@example.com</p>
+                    <p class="mb-2"> <i class="fa fa-envelope me-3"></i><a href="mailto:MOHAMMED.MSATFI@hotmail.com" target="_blank">MOHAMMED.MSATFI@hotmail.com</a></p>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <h4 class="text-white mb-4">Services</h4>
@@ -180,6 +217,114 @@
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+    <script>
+  (function () {
+    const form = document.getElementById("contactForm");
+    const sendBtn = document.getElementById("sendBtn");
+    const toast = document.getElementById("toast");
+    const endpoint = form.dataset.endpoint;
+
+    // 🧩 Toast helper
+    function showToast(message, type = "default") {
+      toast.textContent = message;
+      toast.className = "toast show " + type;
+      setTimeout(() => {
+        toast.classList.remove("show");
+        toast.className = "toast";
+      }, 3000);
+    }
+
+    // ✅ Prevent all native submits
+    form.removeAttribute("action");
+    form.onsubmit = (e) => {
+      e.preventDefault();
+      return false;
+    };
+
+    // ✅ Send via fetch
+    async function sendForm() {
+      if (sendBtn.disabled) return;
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      const formData = new FormData(form);
+      sendBtn.disabled = true;
+      sendBtn.textContent = "Sending...";
+
+      try {
+        const res = await fetch(endpoint, {
+          method: "POST",
+          body: formData,
+          headers: { Accept: "application/json" },
+        });
+
+        if (res.ok) {
+          showToast("✅ Message sent successfully!", "success");
+          form.reset();
+        } else {
+          showToast("❌ Failed to send message. Please try again.", "error");
+        }
+      } catch (err) {
+        showToast("⚠️ Network error. Please try again.", "error");
+      } finally {
+        sendBtn.disabled = false;
+        sendBtn.textContent = "SEND MESSAGE";
+      }
+    }
+
+    // ✅ Attach handler to button
+    sendBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      sendForm();
+    });
+
+    // ✅ Prevent Enter key native submit
+    form.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && e.target.tagName !== "TEXTAREA") {
+        e.preventDefault();
+        sendForm();
+      }
+    });
+  })();
+</script>
+
+<style>
+  /* ✨ Toast styles – matches Bootstrap aesthetic */
+  .toast {
+    visibility: hidden;
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: rgba(33, 37, 41, 0.9);
+    color: #fff;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 2000;
+    backdrop-filter: blur(6px);
+  }
+
+  .toast.show {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .toast.success {
+    border-left: 4px solid #198754; /* Bootstrap success color */
+  }
+
+  .toast.error {
+    border-left: 4px solid #dc3545; /* Bootstrap danger color */
+  }
+</style>
+
 </body>
 
 </html>
